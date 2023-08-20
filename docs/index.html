@@ -17,17 +17,10 @@
   <hr>
 
   <div id="content">
-    <h1>Hello World!</h1>
-
-    <button style="background-color: var(--primary)">primary</button>
-    <button style="background-color: var(--secondary)">secondary</button>
-    <button style="background-color: var(--tertiary)">tertiary</button>
-    <button style="background-color: var(--success)">success</button>
-    <button style="background-color: var(--warning)">warning</button>
-    <button style="background-color: var(--danger)">danger</button>
-    <button style="background-color: var(--dark)">dark</button>
-    <button style="background-color: var(--medium)">medium</button>
-    <button style="background-color: var(--light)">light</button>
+    <label for="dateInput">Select a date:</label>
+    <input type="date" id="dateInput">
+    <button onclick="calculateTimeDifference()">Calculate</button>
+    <p id="output"></p>
   </div>
 
   <hr>
