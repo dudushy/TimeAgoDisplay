@@ -4,10 +4,10 @@ console.log(`[${TITLE}] Hello World!`);
 
 function calculateTimeDifference() {
   const dateInput = document.getElementById("dateInput").value;
-  const selectedDate = new Date(dateInput);
+  const selectedDate = new Date(dateInput).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" });;
   console.log(`[${TITLE}] selectedDate`, selectedDate);
 
-  const currentDate = new Date();
+  const currentDate = new Date().toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" });;
   console.log(`[${TITLE}] currentDate`, currentDate);
 
   const timeDifference = currentDate - selectedDate;
