@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>TimeAgoDisplay</title>
+  <title>TimeDisplay</title>
   <link rel="stylesheet" href="style.css">
   <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
 </head>
@@ -11,16 +11,19 @@
 <body>
   <header>
     <h1>
-      <a href="https://github.com/dudushy/TimeAgoDisplay" target="_blank">TimeAgoDisplay</a>
+      <a href="https://github.com/dudushy/TimeDisplay" target="_blank">TimeDisplay</a>
     </h1>
   </header>
   <hr>
 
   <div id="content">
-    <label for="dateInput">Select a date:</label>
-    <input type="date" id="dateInput">
-    <button onclick="calculateTimeDifference()">Calculate</button>
+    <label for="sampleDateInput">Select a date:</label>
+    <input type="date" id="sampleDateInput">
+    <button onclick="calculateTimeDifference(this.value, true)">Calculate</button>
+    <button onclick="addClock()">Add</button>
     <p id="output"></p>
+
+    <div id="clocks"></div>
   </div>
 
   <hr>
