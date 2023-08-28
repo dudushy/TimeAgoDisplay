@@ -17,46 +17,37 @@ function calculateTimeDifference(dateInput, sample = false) {
   const currentDate = new Date();
   console.log(`[${TITLE}#calculateTimeDifference] currentDate`, currentDate);
 
-  const timeDifference = selectedDate - currentDate;
-  console.log(`[${TITLE}#calculateTimeDifference] timeDifference`, timeDifference);
+  const timeDiff = Math.abs(selectedDate - currentDate) / 1000;
+  console.log(`[${TITLE}#calculateTimeDifference] timeDiff`, timeDiff);
 
-  const seconds = Math.abs(Math.floor(timeDifference / 1000));
-  console.log(`[${TITLE}#calculateTimeDifference] seconds`, seconds);
-
-  const minutes = Math.floor(seconds / 60);
-  console.log(`[${TITLE}#calculateTimeDifference] minutes`, minutes);
-
-  const hours = Math.floor(minutes / 60);
-  console.log(`[${TITLE}#calculateTimeDifference] hours`, hours);
-
-  const days = Math.floor(hours / 24);
-  console.log(`[${TITLE}#calculateTimeDifference] days`, days);
-
-  const weeks = Math.floor(days / 7);
-  console.log(`[${TITLE}#calculateTimeDifference] weeks`, weeks);
-
-  const years = Math.floor(weeks / 52);
+  const years = Math.floor(timeDiff / (365 * 24 * 60 * 60));
   console.log(`[${TITLE}#calculateTimeDifference] years`, years);
 
-  const remainingWeeks = weeks % 52;
-  console.log(`[${TITLE}#calculateTimeDifference] remainingWeeks`, remainingWeeks);
+  const months = Math.floor((timeDiff % (365 * 24 * 60 * 60)) / (30 * 24 * 60 * 60));
+  console.log(`[${TITLE}#calculateTimeDifference] months`, months);
 
-  const remainingDays = days % 7;
-  console.log(`[${TITLE}#calculateTimeDifference] remainingDays`, remainingDays);
+  const weeks = Math.floor((timeDiff % (30 * 24 * 60 * 60)) / (7 * 24 * 60 * 60));
+  console.log(`[${TITLE}#calculateTimeDifference] weeks`, weeks);
 
-  const remainingHours = hours % 24;
-  console.log(`[${TITLE}#calculateTimeDifference] remainingHours`, remainingHours);
+  const days = Math.floor((timeDiff % (7 * 24 * 60 * 60)) / (24 * 60 * 60));
+  console.log(`[${TITLE}#calculateTimeDifference] days`, days);
 
-  const remainingMinutes = minutes % 60;
-  console.log(`[${TITLE}#calculateTimeDifference] remainingMinutes`, remainingMinutes);
+  const fullDays = Math.floor(timeDiff / (24 * 60 * 60));
+  console.log(`[${TITLE}#calculateTimeDifference] fullDays`, fullDays);
 
-  const remainingSeconds = seconds % 60;
-  console.log(`[${TITLE}#calculateTimeDifference] remainingSeconds`, remainingSeconds);
+  const hours = Math.floor((timeDiff % (24 * 60 * 60)) / (60 * 60));
+  console.log(`[${TITLE}#calculateTimeDifference] hours`, hours);
 
-  let resultTime = `${years}y ${remainingWeeks}w ${remainingDays}d ${remainingHours}h ${remainingMinutes}min ${remainingSeconds}s`;
+  const minutes = Math.floor((timeDiff % (60 * 60)) / 60);
+  console.log(`[${TITLE}#calculateTimeDifference] minutes`, minutes);
+
+  const seconds = Math.floor(timeDiff % 60);
+  console.log(`[${TITLE}#calculateTimeDifference] seconds`, seconds);
+
+  let resultTime = `${years}y ${months}mo ${weeks}w ${days}d ${hours}h ${minutes}min ${seconds}s`;
   console.log(`[${TITLE}#calculateTimeDifference] (BEFORE) resultTime`, resultTime);
 
-  if (timeDifference <= 0) resultTime += " ago";
+  if (selectedDate <= currentDate) resultTime += " ago";
   console.log(`[${TITLE}#calculateTimeDifference] (AFTER) resultTime`, resultTime);
 
   if (sample) document.getElementById("output").textContent = resultTime;
