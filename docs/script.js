@@ -1,5 +1,8 @@
 const TITLE = "TimeDisplay";
-const clockArray = [];
+const clockArray = localStorage.getItem("clockArray") ? JSON.parse(localStorage.getItem("clockArray")) : [];
+console.log(`[${TITLE}] clockArray`, clockArray);
+
+loadClocks();
 
 function calculateTimeDifference(dateInput, sample = false) {
   console.log(`[${TITLE}#calculateTimeDifference] dateInput`, dateInput);
@@ -54,24 +57,64 @@ function calculateTimeDifference(dateInput, sample = false) {
   else return resultTime;
 }
 
+function clearClocks() {
+  console.log(`[${TITLE}#clearClocks] (BEFORE) clockArray`, clockArray);
+
+  clockArray.forEach((clock) => {
+    clearInterval(clock.intervalId);
+  });
+
+  document.getElementById("clocks").innerHTML = "";
+
+  clockArray.length = 0;
+  localStorage.setItem("clockArray", JSON.stringify(clockArray));
+
+  console.log(`[${TITLE}#clearClocks] (AFTER) clockArray`, clockArray);
+
+  clearInterval();
+}
+
+function loadClocks() {
+  console.log(`[${TITLE}#loadClocks] clockArray`, clockArray);
+
+  clockArray.forEach((clock) => {
+    const clockElement = document.createElement("p");
+    clockElement.setAttribute("id", `clock-${clock.id}`);
+    setInterval(updateClock, 1000, clockElement, clock.date)
+    document.getElementById("clocks").appendChild(clockElement);
+  });
+}
+
 function addClock() {
-  if (!document.getElementById("sampleDateInput").value) {
+  const dateInput = document.getElementById("sampleDateInput").value;
+  console.log(`[${TITLE}#addClock] dateInput`, dateInput);
+
+  if (!dateInput) {
     alert("Please enter a date");
     return;
   }
 
-  console.log(`[${TITLE}#addClock] clockArray`, clockArray);
+  console.log(`[${TITLE}#addClock] (BEFORE) clockArray`, clockArray);
 
   // clockInput.setAttribute("onchange", "calculateTimeDifference(this.value)");
-  // clockArray.push(clock);
 
-  const clock = document.createElement("p");
-  setInterval(test, 1000, clock, "a")
-  document.getElementById("clocks").appendChild(clock);
+  const clockElement = document.createElement("p");
+  clockElement.setAttribute("id", `clock-${clockArray.length}`);
+  const clockIntervalId = setInterval(updateClock, 1000, clockElement, dateInput)
+  document.getElementById("clocks").appendChild(clockElement);
+
+  clockArray.push({
+    date: dateInput,
+    id: clockArray.length,
+    intervalId: clockIntervalId,
+  });
+
+  console.log(`[${TITLE}#addClock] (AFTER) clockArray`, clockArray);
+  localStorage.setItem("clockArray", JSON.stringify(clockArray));
 }
 
-function test(clock, char) {
-  console.log(`[${TITLE}#test] (${char}) clock`, clock);
+function updateClock(clock, dateInput) {
+  console.log(`[${TITLE}#updateClock] (${dateInput}) clock`, clock);
 
-  clock.innerText += char;
+  clock.innerText = calculateTimeDifference(dateInput);
 }
