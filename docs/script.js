@@ -2,25 +2,45 @@ const TITLE = "TimeDisplay";
 const clockArray = localStorage.getItem("clockArray") ? JSON.parse(localStorage.getItem("clockArray")) : [];
 console.log(`[${TITLE}] clockArray`, clockArray);
 
+setupBaseDate();
+setupBaseTime();
+
 loadClocks();
 
-function calculateTimeDifference(dateInput, sample = false) {
-  console.log(`[${TITLE}#calculateTimeDifference] dateInput`, dateInput);
+setInterval(updateClocks, 1000);
+
+function calculateTimeDifference(baseDateInput, baseTimeInput, targetDateInput, targetTimeInput, baseCurrentDateTime = false, targetCurrentDateTime = false, sample = false) {
+  console.log(`[${TITLE}#calculateTimeDifference] baseDateInput`, baseDateInput);
+  console.log(`[${TITLE}#calculateTimeDifference] baseTimeInput`, baseTimeInput);
+  console.log(`[${TITLE}#calculateTimeDifference] baseCurrentDateTime`, baseCurrentDateTime);
+
+  console.log(`[${TITLE}#calculateTimeDifference] targetDateInput`, targetDateInput);
+  console.log(`[${TITLE}#calculateTimeDifference] targetTimeInput`, targetTimeInput);
+  console.log(`[${TITLE}#calculateTimeDifference] targetCurrentDateTime`, targetCurrentDateTime);
 
   if (sample) {
-    dateInput = document.getElementById("sampleDateInput").value;
-    console.log(`[${TITLE}#calculateTimeDifference] (sample) dateInput`, dateInput);
+    baseDateInput = document.getElementById("sampleBaseDateInput").value || baseCurrentDateTime;
+    console.log(`[${TITLE}#calculateTimeDifference] (sample) baseDateInput`, baseDateInput);
+
+    baseTimeInput = document.getElementById("sampleBaseTimeInput").value || baseCurrentDateTime;
+    console.log(`[${TITLE}#calculateTimeDifference] (sample) baseTimeInput`, baseTimeInput);
+
+    targetDateInput = document.getElementById("sampleTargetDateInput").value || targetCurrentDateTime;
+    console.log(`[${TITLE}#calculateTimeDifference] (sample) targetDateInput`, targetDateInput);
+
+    targetTimeInput = document.getElementById("sampleTargetTimeInput").value || targetCurrentDateTime;
+    console.log(`[${TITLE}#calculateTimeDifference] (sample) targetTimeInput`, targetTimeInput);
   }
 
-  if (!dateInput) return null;
+  if (!baseDateInput || !baseTimeInput || !targetDateInput || !targetTimeInput) return null;
 
-  const selectedDate = new Date(`${dateInput}T00:00:00`);
-  console.log(`[${TITLE}#calculateTimeDifference] selectedDate`, selectedDate);
+  const baseDateTime = baseCurrentDateTime ? new Date() : new Date(`${baseDateInput}T${baseTimeInput}:00`);
+  console.log(`[${TITLE}#calculateTimeDifference] baseDateTime`, baseDateTime);
 
-  const currentDate = new Date();
-  console.log(`[${TITLE}#calculateTimeDifference] currentDate`, currentDate);
+  const targetDateTime = targetCurrentDateTime ? new Date() : new Date(`${targetDateInput}T${targetTimeInput}:00`);
+  console.log(`[${TITLE}#calculateTimeDifference] targetDateTime`, targetDateTime);
 
-  const timeDiff = Math.abs(selectedDate - currentDate) / 1000;
+  const timeDiff = Math.abs(targetDateTime - baseDateTime) / 1000;
   console.log(`[${TITLE}#calculateTimeDifference] timeDiff`, timeDiff);
 
   const years = Math.floor(timeDiff / (365 * 24 * 60 * 60));
@@ -50,7 +70,7 @@ function calculateTimeDifference(dateInput, sample = false) {
   let resultTime = `${years}y ${months}mo ${weeks}w ${days}d ${hours}h ${minutes}min ${seconds}s`;
   console.log(`[${TITLE}#calculateTimeDifference] (BEFORE) resultTime`, resultTime);
 
-  if (selectedDate <= currentDate) resultTime += " ago";
+  if (targetDateTime <= baseDateTime) resultTime += " ago";
   console.log(`[${TITLE}#calculateTimeDifference] (AFTER) resultTime`, resultTime);
 
   if (sample) document.getElementById("output").textContent = resultTime;
@@ -78,43 +98,150 @@ function loadClocks() {
   console.log(`[${TITLE}#loadClocks] clockArray`, clockArray);
 
   clockArray.forEach((clock) => {
+    console.log(`[${TITLE}#loadClocks] clock`, clock);
+
     const clockElement = document.createElement("p");
     clockElement.setAttribute("id", `clock-${clock.id}`);
-    setInterval(updateClock, 1000, clockElement, clock.date)
+    // setInterval(updateClock, 1000, clockElement, clock.baseDate, clock.baseTime, clock.targetDate, clock.targetTime, clock.baseCurrentDateTime, clock.targetCurrentDateTime)
     document.getElementById("clocks").appendChild(clockElement);
   });
 }
 
-function addClock() {
-  const dateInput = document.getElementById("sampleDateInput").value;
-  console.log(`[${TITLE}#addClock] dateInput`, dateInput);
+async function addClock() {
+  const clockNameInput = document.getElementById("clockNameInput").value;
+  console.log(`[${TITLE}#addClock] clockNameInput`, clockNameInput);
 
-  if (!dateInput) {
-    alert("Please enter a date");
+  const clockIconInput = document.getElementById("clockIconInput");
+  console.log(`[${TITLE}#addClock] clockIconInput`, clockIconInput);
+
+  const baseDateInput = document.getElementById("sampleBaseDateInput").value;
+  console.log(`[${TITLE}#addClock] baseDateInput`, baseDateInput);
+
+  const baseTimeInput = document.getElementById("sampleBaseTimeInput").value;
+  console.log(`[${TITLE}#addClock] baseTimeInput`, baseTimeInput);
+
+  const targetDateInput = document.getElementById("sampleTargetDateInput").value;
+  console.log(`[${TITLE}#addClock] targetDateInput`, targetDateInput);
+
+  const targetTimeInput = document.getElementById("sampleTargetTimeInput").value;
+  console.log(`[${TITLE}#addClock] targetTimeInput`, targetTimeInput);
+
+  const baseCurrentDateTime = document.getElementById("sampleBaseCurrentDateTime").checked;
+  console.log(`[${TITLE}#addClock] baseCurrentDateTime`, baseCurrentDateTime);
+
+  const targetCurrentDateTime = document.getElementById("sampleTargetCurrentDateTime").checked;
+  console.log(`[${TITLE}#addClock] targetCurrentDateTime`, targetCurrentDateTime);
+
+  if (!clockNameInput || !clockIconInput.value || !baseDateInput || !baseTimeInput || !targetDateInput || !targetTimeInput) {
+    alert("Please complete all fields.");
     return;
   }
 
   console.log(`[${TITLE}#addClock] (BEFORE) clockArray`, clockArray);
 
-  // clockInput.setAttribute("onchange", "calculateTimeDifference(this.value)");
-
   const clockElement = document.createElement("p");
   clockElement.setAttribute("id", `clock-${clockArray.length}`);
-  const clockIntervalId = setInterval(updateClock, 1000, clockElement, dateInput)
+  // const clockIntervalId = setInterval(updateClock, 1000, clockElement, baseDateInput, baseTimeInput, targetDateInput, targetTimeInput, baseCurrentDateTime, targetCurrentDateTime)
   document.getElementById("clocks").appendChild(clockElement);
 
+  const convertBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(file);
+
+      fileReader.onload = () => {
+        resolve(fileReader.result);
+      };
+
+      fileReader.onerror = (error) => {
+        // reject(error);
+        reject("");
+      };
+    });
+  };
+
+  const iconBase64 = await convertBase64(clockIconInput.files[0]);
+  console.log(`[${TITLE}#addClock] iconBase64`, iconBase64);
+
   clockArray.push({
-    date: dateInput,
+    name: clockNameInput,
+    icon: iconBase64,
+    baseDate: baseDateInput,
+    baseTime: baseTimeInput,
+    baseCurrentDateTime: baseCurrentDateTime,
+    targetDate: targetDateInput,
+    targetTime: targetTimeInput,
+    targetCurrentDateTime: targetCurrentDateTime,
     id: clockArray.length,
-    intervalId: clockIntervalId,
+    // intervalId: clockIntervalId,
   });
 
   console.log(`[${TITLE}#addClock] (AFTER) clockArray`, clockArray);
   localStorage.setItem("clockArray", JSON.stringify(clockArray));
 }
 
-function updateClock(clock, dateInput) {
-  console.log(`[${TITLE}#updateClock] (${dateInput}) clock`, clock);
+function updateClock(clock, baseDateInput, baseTimeInput, targetDateInput, targetTimeInput, baseCurrentDateTime, targetCurrentDateTime) {
+  console.log(`[${TITLE}#updateClock] (${targetDateInput}) clock`, clock);
 
-  clock.innerText = calculateTimeDifference(dateInput);
+  clock.innerText = calculateTimeDifference(baseDateInput, baseTimeInput, targetDateInput, targetTimeInput, baseCurrentDateTime, targetCurrentDateTime);
+}
+
+function updateClocks() {
+  console.log(`[${TITLE}#updateClocks] clockArray`, clockArray);
+
+  clockArray.forEach((clock) => {
+    console.log(`[${TITLE}#updateClocks] (${clock.id}) clock`, clock);
+
+    const clockElement = document.getElementById(`clock-${clock.id}`);
+    console.log(`[${TITLE}#updateClocks] (${clock.id}) clockElement`, clockElement);
+
+    // const clockIcon = document.createElement("img");
+    // clockIcon.setAttribute("src", clock.icon);
+    // clockElement.appendChild(clockIcon);
+
+    // const clockName = document.createElement("span");
+    // clockName.innerText = `${clock.name}`;
+    // clockElement.appendChild(clockName);
+
+    const clockDateTime = calculateTimeDifference(clock.baseDate, clock.baseTime, clock.targetDate, clock.targetTime, clock.baseCurrentDateTime, clock.targetCurrentDateTime);
+    console.log(`[${TITLE}#updateClocks] (${clock.id}) clockDateTime`, clockDateTime);
+
+    clockElement.innerText = `${clock.name}: [${clock.baseDate} ${clock.baseTime}] ${clockDateTime}`;
+  });
+}
+
+function setupBaseDate() {
+  const currentDate = new Date();
+  console.log(`[${TITLE}#setupBaseDate] currentDate`, currentDate);
+
+  const baseDateInput = document.getElementById("sampleBaseDateInput");
+  console.log(`[${TITLE}#setupBaseDate] (BEFORE) baseDateInput`, baseDateInput.value);
+
+  baseDateInput.value = currentDate.toISOString().slice(0, 10);
+  console.log(`[${TITLE}#setupBaseDate] (AFTER) baseDateInput`, baseDateInput.value);
+}
+
+function setupBaseTime() {
+  const currentTime = new Date();
+  console.log(`[${TITLE}#setupBaseTime] currentTime`, currentTime);
+
+  const baseTimeInput = document.getElementById("sampleBaseTimeInput");
+  console.log(`[${TITLE}#setupBaseTime] (BEFORE) baseTimeInput`, baseTimeInput.value);
+
+  baseTimeInput.value = currentTime.toTimeString().slice(0, 5);
+  console.log(`[${TITLE}#setupBaseTime] (AFTER) baseTimeInput`, baseTimeInput.value);
+}
+
+function hideSampleInput(type, event) {
+  console.log(`[${TITLE}#hideSampleInput] (${type})`, event);
+
+  const sampleInputs = document.getElementsByClassName(`sample${type}Input`);
+  console.log(`[${TITLE}#hideSampleInput] sampleInputs`, sampleInputs);
+
+  for (let i = 0; i < sampleInputs.length; i++) {
+    const sampleInput = sampleInputs[i];
+    console.log(`[${TITLE}#hideSampleInput] sampleInput`, sampleInput);
+
+    sampleInput.disabled = !sampleInput.disabled;
+  }
 }

@@ -17,9 +17,35 @@
   <hr>
 
   <div id="content">
-    <label for="sampleDateInput">Select a date:</label>
-    <input type="date" id="sampleDateInput">
-    <button onclick="calculateTimeDifference(this.value, true)">Calculate</button>
+    <h2>Create a Clock</h2>
+
+    <div id="clockInfo">
+      <label for="clockNameInput">Clock Name:</label>
+      <input type="text" id="clockNameInput">
+
+      <label for="clockIconInput">Clock Icon:</label>
+      <input type="file" id="clockIconInput" accept="image/*">
+    </div>
+
+    <div id="baseDateDiv">
+      <label>Select BASE date:</label>
+      <input type="date" id="sampleBaseDateInput" class="sampleBaseInput">
+      <input type="time" id="sampleBaseTimeInput" class="sampleBaseInput">
+
+      <input type="checkbox" id="sampleBaseCurrentDateTime" onchange="hideSampleInput('Base', event)">
+      <label for="sampleBaseCurrentDateTime">Use current date and time</label>
+    </div>
+
+    <div id="targetDateDiv">
+      <label>Select TARGET date:</label>
+      <input type="date" id="sampleTargetDateInput" class="sampleTargetInput">
+      <input type="time" id="sampleTargetTimeInput" class="sampleTargetInput">
+
+      <input type="checkbox" id="sampleTargetCurrentDateTime" onchange="hideSampleInput('Target', event)">
+      <label for="sampleTargetCurrentDateTime">Use current date and time</label>
+    </div>
+
+    <button onclick="calculateTimeDifference(null, null, null, null, document.getElementById('sampleBaseCurrentDateTime').checked, document.getElementById('sampleTargetCurrentDateTime').checked, true)">Calculate</button>
     <button onclick="addClock()">Add</button>
     <button onclick="clearClocks()">Clear All</button>
     <p id="output"></p>
