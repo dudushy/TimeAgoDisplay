@@ -43,6 +43,9 @@ function calculateTimeDifference(baseDateInput, baseTimeInput, targetDateInput, 
   const timeDiff = Math.abs(targetDateTime - baseDateTime) / 1000;
   console.log(`[${TITLE}#calculateTimeDifference] timeDiff`, timeDiff);
 
+  const fullDays = Math.floor(timeDiff / (24 * 60 * 60));
+  console.log(`[${TITLE}#calculateTimeDifference] fullDays`, fullDays);
+
   const years = Math.floor(timeDiff / (365 * 24 * 60 * 60));
   console.log(`[${TITLE}#calculateTimeDifference] years`, years);
 
@@ -54,9 +57,6 @@ function calculateTimeDifference(baseDateInput, baseTimeInput, targetDateInput, 
 
   const days = Math.floor((timeDiff % (7 * 24 * 60 * 60)) / (24 * 60 * 60));
   console.log(`[${TITLE}#calculateTimeDifference] days`, days);
-
-  const fullDays = Math.floor(timeDiff / (24 * 60 * 60));
-  console.log(`[${TITLE}#calculateTimeDifference] fullDays`, fullDays);
 
   const hours = Math.floor((timeDiff % (24 * 60 * 60)) / (60 * 60));
   console.log(`[${TITLE}#calculateTimeDifference] hours`, hours);
@@ -132,7 +132,7 @@ async function addClock() {
   const targetCurrentDateTime = document.getElementById("sampleTargetCurrentDateTime").checked;
   console.log(`[${TITLE}#addClock] targetCurrentDateTime`, targetCurrentDateTime);
 
-  if (!clockNameInput || !clockIconInput.value || !baseDateInput || !baseTimeInput || !targetDateInput || !targetTimeInput) {
+  if (!clockNameInput || !baseDateInput || !baseTimeInput || !targetDateInput || !targetTimeInput) {
     alert("Please complete all fields.");
     return;
   }
@@ -147,6 +147,7 @@ async function addClock() {
   const convertBase64 = (file) => {
     return new Promise((resolve, reject) => {
       const fileReader = new FileReader();
+
       fileReader.readAsDataURL(file);
 
       fileReader.onload = () => {
@@ -160,7 +161,7 @@ async function addClock() {
     });
   };
 
-  const iconBase64 = await convertBase64(clockIconInput.files[0]);
+  const iconBase64 = clockIconInput.files.length > 0 ? await convertBase64(clockIconInput.files[0]) : "";
   console.log(`[${TITLE}#addClock] iconBase64`, iconBase64);
 
   clockArray.push({
