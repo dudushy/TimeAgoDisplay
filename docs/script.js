@@ -2,8 +2,8 @@ const TITLE = "TimeDisplay";
 const clockArray = localStorage.getItem("clockArray") ? JSON.parse(localStorage.getItem("clockArray")) : [];
 console.log(`[${TITLE}] clockArray`, clockArray);
 
-setupBaseDate();
-setupBaseTime();
+setupDateTime("Base");
+setupDateTime("Target");
 
 loadClocks();
 
@@ -210,26 +210,23 @@ function updateClocks() {
   });
 }
 
-function setupBaseDate() {
-  const currentDate = new Date();
-  console.log(`[${TITLE}#setupBaseDate] currentDate`, currentDate);
+function setupDateTime(type) {
+  console.log(`[${TITLE}#setupDateTime] type`, type);
 
-  const baseDateInput = document.getElementById("sampleBaseDateInput");
-  console.log(`[${TITLE}#setupBaseDate] (BEFORE) baseDateInput`, baseDateInput.value);
+  const currentDateTime = new Date();
+  console.log(`[${TITLE}#setupDateTime] currentDateTime`, currentDateTime);
 
-  baseDateInput.value = currentDate.toISOString().slice(0, 10);
-  console.log(`[${TITLE}#setupBaseDate] (AFTER) baseDateInput`, baseDateInput.value);
-}
+  const dateInput = document.getElementById(`sample${type}DateInput`);
+  console.log(`[${TITLE}#setupDateTime] (BEFORE) dateInput`, dateInput.value);
 
-function setupBaseTime() {
-  const currentTime = new Date();
-  console.log(`[${TITLE}#setupBaseTime] currentTime`, currentTime);
+  dateInput.value = currentDateTime.toISOString().slice(0, 10);
+  console.log(`[${TITLE}#setupDateTime] (AFTER) dateInput`, dateInput.value);
 
-  const baseTimeInput = document.getElementById("sampleBaseTimeInput");
-  console.log(`[${TITLE}#setupBaseTime] (BEFORE) baseTimeInput`, baseTimeInput.value);
+  const timeInput = document.getElementById(`sample${type}TimeInput`);
+  console.log(`[${TITLE}#setupDateTime] (BEFORE) timeInput`, timeInput.value);
 
-  baseTimeInput.value = currentTime.toTimeString().slice(0, 5);
-  console.log(`[${TITLE}#setupBaseTime] (AFTER) baseTimeInput`, baseTimeInput.value);
+  timeInput.value = currentDateTime.toTimeString().slice(0, 5);
+  console.log(`[${TITLE}#setupDateTime] (AFTER) timeInput`, timeInput.value);
 }
 
 function hideSampleInput(type, event) {
