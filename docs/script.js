@@ -40,34 +40,13 @@ function calculateTimeDifference(baseDateInput, baseTimeInput, targetDateInput, 
   const targetDateTime = targetCurrentDateTime ? new Date() : new Date(`${targetDateInput}T${targetTimeInput}:00`);
   console.log(`[${TITLE}#calculateTimeDifference] targetDateTime`, targetDateTime);
 
-  const timeDiff = Math.abs(targetDateTime - baseDateTime) / 1000;
-  console.log(`[${TITLE}#calculateTimeDifference] timeDiff`, timeDiff);
+  const timeSecondsDiff = Math.abs(targetDateTime.getTime() - baseDateTime.getTime()) / 1000;
+  console.log(`[${TITLE}#calculateTimeDifference] timeSecondsDiff`, timeSecondsDiff);
 
-  const fullDays = Math.floor(timeDiff / (24 * 60 * 60));
-  console.log(`[${TITLE}#calculateTimeDifference] fullDays`, fullDays);
+  const fragmentOutput = fragmentSecondsDiff(Math.floor(timeSecondsDiff));
+  console.log(`[${TITLE}#calculateTimeDifference] fragmentOutput`, fragmentOutput);
 
-  const years = Math.floor(timeDiff / (365 * 24 * 60 * 60));
-  console.log(`[${TITLE}#calculateTimeDifference] years`, years);
-
-  const months = Math.floor((timeDiff % (365 * 24 * 60 * 60)) / (30 * 24 * 60 * 60));
-  console.log(`[${TITLE}#calculateTimeDifference] months`, months);
-
-  const weeks = Math.floor((timeDiff % (30 * 24 * 60 * 60)) / (7 * 24 * 60 * 60));
-  console.log(`[${TITLE}#calculateTimeDifference] weeks`, weeks);
-
-  const days = Math.floor((timeDiff % (7 * 24 * 60 * 60)) / (24 * 60 * 60));
-  console.log(`[${TITLE}#calculateTimeDifference] days`, days);
-
-  const hours = Math.floor((timeDiff % (24 * 60 * 60)) / (60 * 60));
-  console.log(`[${TITLE}#calculateTimeDifference] hours`, hours);
-
-  const minutes = Math.floor((timeDiff % (60 * 60)) / 60);
-  console.log(`[${TITLE}#calculateTimeDifference] minutes`, minutes);
-
-  const seconds = Math.floor(timeDiff % 60);
-  console.log(`[${TITLE}#calculateTimeDifference] seconds`, seconds);
-
-  let resultTime = `${years}y ${months}mo ${weeks}w ${days}d ${hours}h ${minutes}min ${seconds}s`;
+  let resultTime = `${fragmentOutput.years}y ${fragmentOutput.months}mo ${fragmentOutput.weeks}w ${fragmentOutput.days}d ${fragmentOutput.hours}h ${fragmentOutput.minutes}min ${fragmentOutput.seconds}s`;
   console.log(`[${TITLE}#calculateTimeDifference] (BEFORE) resultTime`, resultTime);
 
   if (targetDateTime <= baseDateTime) resultTime += " ago";
@@ -75,6 +54,101 @@ function calculateTimeDifference(baseDateInput, baseTimeInput, targetDateInput, 
 
   if (sample) document.getElementById("output").textContent = resultTime;
   else return resultTime;
+}
+
+function fragmentSecondsDiff(seconds) {
+  console.log(`[${TITLE}#fragmentSecondsDiff] seconds`, seconds);
+
+  const cheatTable = {
+    year: 31536000,
+    month: 2628288,
+    week: 604800,
+    day: 86400,
+    hour: 3600,
+    minute: 60,
+    second: 1,
+  };
+
+  const resultArray = {
+    fullSeconds: 0,
+    seconds: 0,
+
+    fullMinutes: 0,
+    minutes: 0,
+
+    fullHours: 0,
+    hours: 0,
+
+    fullDays: 0,
+    days: 0,
+
+    fullWeeks: 0,
+    weeks: 0,
+
+    fullMonths: 0,
+    months: 0,
+
+    fullYears: 0,
+    years: 0,
+  };
+  console.log(`[${TITLE}#fragmentSecondsDiff] (BEFORE) resultArray`, resultArray);
+
+  let aux = seconds;
+  while (aux > 0) {
+    // console.log(`[${TITLE}#fragmentSecondsDiff/while] aux`, aux); //! DEBUG
+
+    switch (true) {
+      case aux >= cheatTable.year:
+        resultArray.years++;
+        aux -= cheatTable.year;
+        break;
+
+      case aux >= cheatTable.month:
+        resultArray.months++;
+        aux -= cheatTable.month;
+        break;
+
+      case aux >= cheatTable.week:
+        resultArray.weeks++;
+        aux -= cheatTable.week;
+        break;
+
+      case aux >= cheatTable.day:
+        resultArray.days++;
+        aux -= cheatTable.day;
+        break;
+
+      case aux >= cheatTable.hour:
+        resultArray.hours++;
+        aux -= cheatTable.hour;
+        break;
+
+      case aux >= cheatTable.minute:
+        resultArray.minutes++;
+        aux -= cheatTable.minute;
+        break;
+
+      case aux >= cheatTable.second:
+        resultArray.seconds++;
+        aux -= cheatTable.second;
+        break;
+
+      default:
+        break;
+    }
+  }
+  console.log(`[${TITLE}#fragmentSecondsDiff] (AFTER switch) resultArray`, resultArray);
+
+  resultArray.fullSeconds = seconds;
+  resultArray.fullMinutes = Math.round((seconds / cheatTable.minute) * 100) / 100;
+  resultArray.fullHours = Math.round((seconds / cheatTable.hour) * 100) / 100;
+  resultArray.fullDays = Math.round((seconds / cheatTable.day) * 100) / 100;
+  resultArray.fullWeeks = Math.round((seconds / cheatTable.week) * 100) / 100;
+  resultArray.fullMonths = Math.round((seconds / cheatTable.month) * 100) / 100;
+  resultArray.fullYears = Math.round((seconds / cheatTable.year) * 100) / 100;
+
+  console.log(`[${TITLE}#fragmentSecondsDiff] (FINAL) resultArray`, resultArray);
+  return resultArray;
 }
 
 function clearClocks() {
